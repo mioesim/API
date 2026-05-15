@@ -1,0 +1,9 @@
+{
+  "name": "MIOeSIM API",
+  "navigation": [
+    {
+      "group": "Introduction",
+      "pages": ["index"]
+    }
+  ]
+}
