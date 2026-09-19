@@ -1,0 +1,79 @@
+---
+title: Endpoint index
+description: Complete MIOeSIM API v2.13 endpoint list.
+---
+
+# Endpoint index
+
+All paths below are relative to the base URL for your integration. The list follows the 30 operations in API v2.13.
+
+## Authentication
+
+| Operation | Path | Purpose |
+| --- | --- | --- |
+| Login | `POST /api_order/login` | Obtain a verification token. |
+
+## eSIM catalog and orders
+
+| # | Operation | Path | Purpose |
+| ---: | --- | --- | --- |
+| 2.2 | Get eSIM SKU list | `POST /api_esim/getSkus` | List supported eSIM SKUs. |
+| 2.3 | Get SKUs by continent | `POST /api_esim/getSkuByGroup` | Group SKUs by continent. |
+| 2.4 | Get packages by SKU | `POST /api_esim/getPackages` | List packages supported by a SKU. |
+| 2.5 | Place an order | `POST /api_esim/addEsimOrder` | Place an eSIM or physical-SIM order. |
+| 2.6 | Get order information | `POST /api_esim/getOrderInfo` | Retrieve one order by order number. |
+| 2.7 | Query eSIM order list | `POST /api_esim/queryOrder` | Query eSIM orders with pagination. |
+| 2.8 | Verify resources | `POST /api_esim/verifyResource` | Check package resources before ordering. |
+| 2.9 | Redownload order PDF | `POST /api_esim/reDownOrderPDF` | Retrieve the order PDF URL. |
+| 2.10 | Send PDF email | `POST /api_esim/handlerEsimPdf` | Generate/send the order PDF. |
+| 2.11 | Unsubscribe from an order | `POST /api_esim/refundOrder` | Unsubscribe an eSIM or physical-SIM order. |
+| 2.12 | Renew a SIM plan | `POST /api_esim/renewCard` | Renew an eSIM or physical SIM by order and ICCID. |
+
+See [Catalog and orders](catalog-and-orders) for the request and response patterns in this group.
+
+## Physical SIM and ICCID catalog
+
+| # | Operation | Path | Purpose |
+| ---: | --- | --- | --- |
+| 2.13 | Get physical-SIM DPs | `POST /api_esim/getPhysicalSIMDpInfo` | List supported physical-SIM data platforms. |
+| 2.14 | Get DP-supported SKUs | `POST /api_esim/getDpSupportSkuInfo` | List SKUs supported by a DP. |
+| 2.15 | Get DP-supported SKUs by continent | `POST /api_esim/getDpSupportSkuInfoByGroup` | Group DP-supported SKUs. |
+| 2.16 | Get packages by DPID and SKU | `POST /api_esim/getDpSkuSupportPackageInfo` | List packages for a DP/SKU pair. |
+| 2.17 | Get SKUs by ICCID | `POST /api_esim/getICCIDSupportSkuInfo` | List SKUs supported by an ICCID. |
+| 2.18 | Get ICCID SKU groups | `POST /api_esim/getICCIDSkuInfoByGroup` | Group ICCID-supported SKUs. |
+| 2.19 | Get ICCID SKU packages | `POST /api_esim/getICCIDSkuSupportPackageInfo` | List packages for an ICCID-supported SKU. |
+| 2.20 | Get packages by DPID | `POST /api_esim/getDpSupportPackageInfo` | List packages supported by a DP. |
+| 2.21 | Get package details by ICCID | `POST /api_esim/getIccidSupportPackageInfo` | Return package details supported by an ICCID. |
+
+See [Physical SIM](physical-sim) for this group.
+
+## Package-code orders
+
+| # | Operation | Path | Purpose |
+| ---: | --- | --- | --- |
+| 2.22 | Query SIM order list | `POST /api_esim/queryEsimOrder` | Query eSIM and physical-SIM orders. |
+| 2.23 | Verify by package code | `POST /api_esim/verifyResourceByApiCode` | Verify resources using a package unique identifier. |
+| 2.24 | Place order by package code | `POST /api_esim/addEsimOrderByApiCode` | Place an eSIM or physical-SIM order by package code. |
+| 2.25 | Renew by package code | `POST /api_esim/renewCardByApiCode` | Renew by package unique identifier. |
+
+## Account and ICCID operations
+
+| # | Operation | Path | Purpose |
+| ---: | --- | --- | --- |
+| 2.26 | Get account balance | `POST /api_esim/getBalance` | Return balance and currency. |
+| 2.27 | Get ICCID usage detail | `POST /api_esim/getESIMDetail` | Return card, network, plan, and usage information. |
+| 2.28 | Query ICCID information | `POST /api_esim/queryIccidInformation` | Query up to 100 ICCIDs in one request. |
+| 2.29 | Get ICCID package history | `POST /api_esim/getHistoryDetail` | Return historical package/order information. |
+| 2.30 | Synchronize ICCID usage | `POST /api_esim/usedInfoAsync` | Actively synchronize usage data by ICCID. |
+
+See [Usage and ICCID history](usage-and-history) for the v2.11-v2.13 additions.
+
+## Production URLs
+
+For overseas integrations, prepend:
+
+```text
+https://bpm.roamesim.net
+```
+
+The v2.13 supplier document lists `http://bpm.roamwifi.com` for mainland China and lists HTTP for two legacy ICCID endpoints. Confirm regional routing with MIOeSIM before production use and prefer HTTPS for sensitive data.

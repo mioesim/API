@@ -1,0 +1,71 @@
+---
+title: Authentication
+description: Obtain and cache the verification token used by MIOeSIM API operations.
+---
+
+# Authentication
+
+Authentication validates the BPM account and returns a verification token for subsequent requests.
+
+## Login
+
+```http
+POST /api_order/login
+```
+
+Full URL for overseas integrations:
+
+```text
+https://bpm.roamesim.net/api_order/login
+```
+
+### Request fields
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `phonenumber` | string | Yes | BPM account phone number. |
+| `password` | string | Yes | BPM account password. |
+| `sign` | string | Yes | Signature generated using the integration signing secret. |
+
+The supplier document labels the first field as “Phone number”; existing MIOeSIM integrations send it as `phonenumber`.
+
+### Successful response
+
+```json
+{
+  "code": 1,
+  "message": "! Successful",
+  "data": {
+    "token": "<verification-token>"
+  }
+}
+```
+
+### Error responses
+
+```json
+{
+  "code": -1,
+  "message": "Username Password wrong!",
+  "data": ""
+}
+```
+
+```json
+{
+  "code": -30,
+  "message": "sign wrong",
+  "data": ""
+}
+```
+
+## Token lifetime
+
+- The verification token is valid for two hours.
+- Generating a new token expires the previous token.
+- Cache it locally, but expire the cache in less than two hours.
+- On a token-expiration response, authenticate again and retry the operation once.
+
+## Security
+
+Never commit credentials, tokens, or signing secrets to source control. Store them in protected runtime configuration and rotate them if they have been exposed.

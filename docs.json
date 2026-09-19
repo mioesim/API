@@ -1,0 +1,20 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "MIOeSIM API",
+  "navigation": [
+    {
+      "group": "Start here",
+      "pages": ["index", "authentication", "guides/signing"]
+    },
+    {
+      "group": "API reference",
+      "pages": [
+        "reference/endpoints",
+        "reference/catalog-and-orders",
+        "reference/physical-sim",
+        "reference/usage-and-history",
+        "reference/errors"
+      ]
+    }
+  ]
+}

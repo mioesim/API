@@ -1,0 +1,104 @@
+---
+title: Usage and ICCID history
+description: ICCID lookup, usage detail, historical packages, and v2.13 usage synchronization.
+---
+
+# Usage and ICCID history
+
+## Get detailed ICCID usage
+
+```http
+POST /api_esim/getESIMDetail
+```
+
+The v2.13 document lists this operation as “Obtain detailed information on ICCID usage traffic.”
+
+### Request
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `token` | string | Yes | Verification token. |
+| `iccid` | string | Yes | ICCID to inspect. |
+| `sign` | string | Yes | Request signature. |
+
+### Response data
+
+The response can include:
+
+- `supportNetwork`: supported countries and operators.
+- `esimInfo`: ICCID, expiry, renewal support, EID, and card status.
+- `company`: customer/company display information.
+- `supportCountryGroup`: grouped country information.
+- `esimPackets`: plans, order numbers, package details, status, and consumption.
+
+The top-level response also includes `status`.
+
+## Query ICCID information
+
+```http
+POST /api_esim/queryIccidInformation
+```
+
+You can query up to 100 ICCIDs per request. The document specifies comma-separated values in `iccids`.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `token` | string | Yes | Verification token. |
+| `iccids` | string | Yes | Up to 100 comma-separated ICCIDs. |
+| `sign` | string | Yes | Request signature. |
+
+Each returned item can include `success`, `message`, `iccid`, `expireTime`, `canRenew`, `cardType`, `displayName`, `dpId`, `dpStatus`, and `eid`.
+
+## Get ICCID package history
+
+```http
+POST /api_esim/getHistoryDetail
+```
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `token` | string | Yes |
+| `iccid` | string | Yes |
+| `sign` | string | Yes |
+
+The result contains historical orders and nested package details, including order number, SKU, package name, creation time, status, usage, dates, and renewal state.
+
+## v2.13: synchronize data usage
+
+```http
+POST /api_esim/usedInfoAsync
+```
+
+This endpoint actively synchronizes usage data for an ICCID.
+
+### Request
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `iccid` | string | Yes | ICCID whose usage should be synchronized. |
+| `mapCode` | string | Yes | Integration identifier. The document allows digits, letters, and hyphens, with a maximum length of 64 characters. |
+| `sign` | string | Yes | Request signature. |
+
+### Successful response
+
+```json
+{
+  "code": "0",
+  "message": "success",
+  "data": "success"
+}
+```
+
+### Documented failure responses
+
+| Code | Message |
+| ---: | --- |
+| `-1` | `fail` or `No available orders` |
+| `-8` | `usedInfoAsync fail` |
+| `-30` | `sign wrong` |
+
+Treat this operation as asynchronous synchronization: a successful acceptance does not replace the need to query the ICCID again when your workflow requires confirmed updated usage.
+
+<Warning>
+  ICCID and usage information is sensitive customer data. Redact it from logs and never include real ICCIDs in public examples.
+</Warning>

@@ -1,0 +1,44 @@
+---
+title: Request signing
+description: How MIOeSIM requests use the sign field without publishing secrets.
+---
+
+# Request signing
+
+Every authenticated operation includes a `sign` field. The signing secret is issued separately for the integration and must never be published in documentation or source control.
+
+## Integration behavior
+
+The current MIOeSIM integration pattern is:
+
+1. Build the request fields, excluding `sign`.
+2. Sort the field names alphabetically.
+3. Concatenate each pair as `name=value` without a separator.
+4. Append the integration signing secret.
+5. Encode the resulting string as UTF-8.
+6. Calculate the lowercase hexadecimal MD5 digest and send it as `sign`.
+
+```text
+canonical = sort(name=value pairs, excluding sign)
+sign = md5(utf8(canonical + signing_secret))
+```
+
+Do not log the canonical string when it contains passwords, tokens, ICCIDs, or other sensitive values.
+
+## Example
+
+The following is illustrative. It uses placeholders rather than a real credential or secret:
+
+```text
+phonenumber=YOUR_ACCOUNT
+password=YOUR_PASSWORD
+
+canonical = password=YOUR_PASSWORDphonenumber=YOUR_ACCOUNT
+sign = md5(canonical + YOUR_SIGNING_SECRET)
+```
+
+The exact transport encoding and field names must match the endpoint contract. See the endpoint-specific request tables before implementing a client.
+
+<Warning>
+  Never copy the test key shown in the supplier PDF into a public client, repository, or production configuration.
+</Warning>

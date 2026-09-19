@@ -1,0 +1,52 @@
+---
+title: Physical SIM
+description: Physical-SIM data-platform, SKU, package, and package-code operations.
+---
+
+# Physical SIM
+
+API v2.13 supports physical-SIM catalog and lifecycle operations alongside eSIM operations.
+
+## Data-platform and catalog operations
+
+| Operation | Path | Main inputs |
+| --- | --- | --- |
+| Physical-SIM DPs | `POST /api_esim/getPhysicalSIMDpInfo` | `token`, `sign` |
+| DP-supported SKUs | `POST /api_esim/getDpSupportSkuInfo` | `token`, `dpId`, `sign` |
+| DP SKUs by continent | `POST /api_esim/getDpSupportSkuInfoByGroup` | `token`, `dpId`, `sign` |
+| Packages by DPID and SKU | `POST /api_esim/getDpSkuSupportPackageInfo` | `token`, `dpId`, `skuId`, `sign` |
+| Packages by DPID | `POST /api_esim/getDpSupportPackageInfo` | `token`, `dpId`, `sign` |
+
+The response models include DP information, SKU collections, package identifiers, and package details. The v2.13 document uses `detailId` for package-detail identification in the DP package responses.
+
+## ICCID catalog operations
+
+| Operation | Path | Main inputs |
+| --- | --- | --- |
+| SKUs supported by ICCID | `POST /api_esim/getICCIDSupportSkuInfo` | `token`, `iccid`, `sign` |
+| ICCID SKU groups | `POST /api_esim/getICCIDSkuInfoByGroup` | `token`, `iccid`, `sign` |
+| Packages for ICCID SKU | `POST /api_esim/getICCIDSkuSupportPackageInfo` | `token`, `iccid`, `skuId`, `sign` |
+| Package details for ICCID | `POST /api_esim/getIccidSupportPackageInfo` | `token`, `iccid`, `sign` |
+
+Use the exact casing shown in the endpoint contract. The supplier document contains both `skuId` and `skuid` in different payloads; do not normalize field names across endpoints without testing.
+
+## Package-code order operations
+
+| Operation | Path | Purpose |
+| --- | --- | --- |
+| Query SIM orders | `POST /api_esim/queryEsimOrder` | Query eSIM and physical-SIM orders. |
+| Verify by package code | `POST /api_esim/verifyResourceByApiCode` | Verify package resources by unique package identifier. |
+| Place order by package code | `POST /api_esim/addEsimOrderByApiCode` | Place an eSIM or physical-SIM order. |
+| Renew by package code | `POST /api_esim/renewCardByApiCode` | Renew an eSIM or physical SIM. |
+
+The package-code endpoints are useful when the catalog selection has already been resolved to a unique package identifier. They still require the normal token and signature flow.
+
+## Card-type response values
+
+The ICCID information response documents:
+
+| `cardType` | Meaning |
+| ---: | --- |
+| `0` | eSIM card |
+| `1` | Physical SIM card |
+

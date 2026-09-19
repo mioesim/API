@@ -1,0 +1,114 @@
+---
+title: Catalog and orders
+description: eSIM catalog, ordering, renewal, and order-management operations.
+---
+
+# Catalog and orders
+
+All operations require a valid `token` and `sign` unless noted otherwise.
+
+## Catalog operations
+
+### Get eSIM SKUs
+
+```http
+POST /api_esim/getSkus
+```
+
+Request fields:
+
+| Field | Type | Required |
+| --- | --- | --- |
+| `token` | string | Yes |
+| `sign` | string | Yes |
+
+The response contains `data` as a list of SKU objects, including `skuid`, `display`, and `countryCode`.
+
+### Get SKUs grouped by continent
+
+```http
+POST /api_esim/getSkuByGroup
+```
+
+Request fields: `token`, `sign`.
+
+The response groups SKU objects under `data.data` and includes continent metadata. SKU objects can include `skuid`, `countryCode`, `imageUrl`, `display`, `note`, `search`, and `continentCode`.
+
+### Get packages by SKU
+
+```http
+POST /api_esim/getPackages
+```
+
+Request fields:
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `token` | string | Yes | Verification token. |
+| `skuId` | string | Yes | SKU identifier. |
+| `sign` | string | Yes | Request signature. |
+
+## Order lifecycle
+
+### Place an order
+
+```http
+POST /api_esim/addEsimOrder
+```
+
+This operation supports eSIM and physical SIM cards. The PDF specifies the order fields `skuId`, `priceId`, `count`, and `remark`; day-pass orders also use `daypassDays` where applicable.
+
+### Get order information
+
+```http
+POST /api_esim/getOrderInfo
+```
+
+Required operation fields include `orderNum`, `token`, and `sign`.
+
+### Query eSIM orders
+
+```http
+POST /api_esim/queryOrder
+```
+
+Use `page` for pagination; the documented default page size is 10. The response includes `total`, `page`, and the order data.
+
+### Verify resources
+
+```http
+POST /api_esim/verifyResource
+```
+
+Validate package availability before placing an order. Supply the package-identifying fields from the selected SKU/package and sign the request.
+
+### Redownload or email an order PDF
+
+```http
+POST /api_esim/reDownOrderPDF
+POST /api_esim/handlerEsimPdf
+```
+
+The order-PDF responses include an order number and, when generated successfully, a PDF URL. Do not expose generated PDF URLs publicly; treat them as customer data.
+
+### Unsubscribe and renew
+
+```http
+POST /api_esim/refundOrder
+POST /api_esim/renewCard
+```
+
+`renewCard` supports eSIM and physical-SIM renewal by order number and ICCID. The successful response returns the resulting order number in `data`.
+
+## Response handling
+
+Handle at least these common results:
+
+| Code | Meaning |
+| ---: | --- |
+| `0` | Successful operation in the documented examples. |
+| `-1` | Token expired or operation failed, depending on endpoint. |
+| `-3` | Endpoint-specific failure, such as balance retrieval failure. |
+| `-30` | Signature validation failed. |
+
+Do not treat HTTP 200 alone as a successful business operation; inspect `code`, `message`, and `data`.

@@ -1,0 +1,70 @@
+---
+title: MIOeSIM API
+description: Developer reference for MIOeSIM eSIM and physical SIM provisioning.
+---
+
+# MIOeSIM API
+
+Integrate eSIM and physical SIM catalog, ordering, renewal, ICCID information, usage, and account operations through the MIOeSIM BPM API.
+
+This reference is based on **ESIM API Documentation v2.13**, revised **22 July 2026**. It includes the v2.13 endpoint for actively synchronizing data usage by ICCID, plus the physical-SIM and ICCID operations introduced in earlier revisions.
+
+## Before you start
+
+1. Request production credentials and the signing secret from MIOeSIM.
+2. Read [Authentication](authentication) and [Request signing](guides/signing).
+3. Cache the verification token locally for less than two hours. Issuing a new token invalidates the previous one.
+4. Start with catalog queries, then validate resources before placing an order.
+
+<Note>
+  Credentials, signing secrets, and the test key from the supplier document are intentionally not published in this portal. Use credentials issued for your integration.
+</Note>
+
+## Environments and base URLs
+
+For overseas integrations, the v2.13 document specifies:
+
+```text
+https://bpm.roamesim.net
+```
+
+For users in mainland China, the document lists:
+
+```text
+http://bpm.roamwifi.com
+```
+
+Use HTTPS whenever the endpoint and network path support it. Do not send credentials, tokens, ICCIDs, or usage data over an unencrypted connection unless MIOeSIM has explicitly approved that path.
+
+## Common request shape
+
+Most operations are sent as a form or JSON request containing a token, operation-specific fields, and a `sign` value. The exact field names and types are listed in the endpoint reference.
+
+```text
+token=<verification-token>
+<operation-field>=<value>
+sign=<signature>
+```
+
+## Common response shape
+
+Most endpoints return an envelope with these fields:
+
+| Field | Meaning |
+| --- | --- |
+| `code` | Operation status code. |
+| `message` | Human-readable result or error message. |
+| `data` | Endpoint-specific result payload. |
+
+The usage-detail endpoint also returns a top-level `status` field.
+
+## v2.13 changes
+
+- Added `POST /api_esim/usedInfoAsync` to actively synchronize data usage for an ICCID.
+- Retained ICCID card lookup with support for up to 100 ICCIDs per request.
+- Retained historical package lookup by ICCID.
+- Retained physical-SIM catalog, ordering, renewal, and package-code operations.
+
+<Tip>
+  Use the [complete endpoint index](reference/endpoints) to locate an operation, then follow the group-specific pages for request fields and response models.
+</Tip>

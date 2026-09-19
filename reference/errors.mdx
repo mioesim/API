@@ -1,0 +1,42 @@
+---
+title: Errors and status codes
+description: Common MIOeSIM API response codes and safe client behavior.
+---
+
+# Errors and status codes
+
+The API reports business results in the response body. Always inspect `code`, `message`, and `data` in addition to the HTTP status.
+
+## Common codes
+
+| Code | Meaning or documented use | Client action |
+| ---: | --- | --- |
+| `0` | Success in most endpoint examples. | Process `data`. |
+| `-1` | Token expired or endpoint-specific failure. | Re-authenticate once, then retry once if the message indicates expiration. |
+| `-2` | Username or password is empty during login. | Correct protected configuration. |
+| `-3` | Endpoint-specific failure; the balance example uses it for balance retrieval failure. | Stop and surface the endpoint message. |
+| `-8` | `usedInfoAsync` failure. | Record the failure without logging ICCID data and retry according to your workflow. |
+| `-30` | Signature validation failed. | Rebuild the canonical input and verify the signing secret; do not retry indefinitely. |
+| `400108` | Access denied in the ICCID usage-detail example. | Check account permissions and integration scope. |
+| `400109` | Access not supported in the ICCID usage-detail example. | Check whether the card or operation is supported. |
+
+## Safe retry policy
+
+1. Retry authentication only when the response indicates token expiration.
+2. Retry an idempotent read once after obtaining a fresh token.
+3. Do not automatically repeat order, renewal, refund, or unsubscribe operations without an idempotency strategy and a confirmed order state.
+4. Preserve the provider's `message` for internal diagnostics, but redact credentials, tokens, ICCIDs, and customer data from logs.
+
+## Order status values
+
+The supplier document includes these order status values in package models:
+
+| Status | Meaning |
+| ---: | --- |
+| `-1` | Unpaid |
+| `0` | Paid/normal, depending on the model |
+| `1` | Canceled |
+| `2` | Ended/completed |
+| `3` | Unsubscription processing |
+
+Confirm the exact status interpretation for the endpoint response model before using it in automated fulfillment logic.
